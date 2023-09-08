@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State private var isNight = false
+    
     var body: some View {
         ZStack {
-            Color(.blue)
-            BackgroundView(topColor: .blue, bottomColor: .white)
+            BackgroundView(isNight: $isNight)
+            
             VStack {
                CityTextView(cityName: "Cupertion, CA")
                 
-                MainWeatherStatusView(imageName: "sun.horizon.fill", temperature: 70)
+                MainWeatherStatusView(imageName: isNight ? "moon.stars.fill" : "sun.horizon.fill", temperature: 70)
                 
                 Spacer()
                 
@@ -34,7 +37,7 @@ struct ContentView: View {
                 Spacer()
                 
                 Button {
-                    print("tapped")
+                    isNight.toggle()
                 } label: {
                     WeatherButton(title: "changed day time", textColor: .black, backgroundColor: .white)
                 }
@@ -75,13 +78,13 @@ struct WeatherDayView: View {
 }
 
 struct BackgroundView: View {
+    @Binding var isNight : Bool
     
-    var topColor: Color
-    var bottomColor: Color
     var body: some View {
     
-        LinearGradient(gradient: Gradient(colors: [topColor,bottomColor]),
-                       startPoint: .leading,
+        LinearGradient(gradient: Gradient(colors: [isNight ? .black : .blue,
+                                                   isNight ? .gray : .white]),
+                       startPoint: .topLeading,
                        endPoint: .bottom)
         //                .ignoresSafeArea(edges: .all)
         .edgesIgnoringSafeArea(.all)
@@ -109,7 +112,7 @@ struct MainWeatherStatusView: View {
                 .renderingMode(.original)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 80,height: 80)
+                .frame(width: 230,height: 230)
             
             Text("\(temperature)")
                 .font(.system(size: 70,weight: .medium))
